@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTrack - Fitness Tracker</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #eef2ff;
+            --green: #10b981;
+            --orange: #f59e0b;
+            --red: #ef4444;
+            --dark: #172033;
+            --text: #374151;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --background: #f5f7fb;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 23px;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 22px;
+        }
+
+        .date-display {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        main {
+            width: 90%;
+            max-width: 1200px;
+            margin: 35px auto;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h1 {
+            color: var(--dark);
+            font-size: 30px;
+            margin-bottom: 7px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+        }
+
+        /* Dashboard cards */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px;
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            font-size: 20px;
+        }
+
+        .steps-icon {
+            background: #eef2ff;
+            color: var(--primary);
+        }
+
+        .workout-icon {
+            background: #ecfdf5;
+            color: var(--green);
+        }
+
+        .calories-icon {
+            background: #fff7ed;
+            color: var(--orange);
+        }
+
+        .activities-icon {
+            background: #fdf2f8;
+            color: #db2777;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-size: 27px;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .goal {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        /* Main grid */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .card-header h2 {
+            color: var(--dark);
+            font-size: 19px;
+        }
+
+        /* Progress */
+
+        .progress-item {
+            margin-bottom: 20px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .progress-info strong {
+            color: var(--dark);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: #eef0f4;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: inherit;
+            transition: width 0.5s ease;
+        }
+
+        .steps-progress {
+            background: var(--primary);
+        }
+
+        .workout-progress {
+            background: var(--green);
+        }
+
+        .calories-progress {
+            background: var(--orange);
+        }
+
+        /* Chart */
+
+        .chart {
+            height: 230px;
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            gap: 12px;
+            padding-top: 20px;
+        }
+
+        .chart-column {
+            height: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar-wrapper {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+        }
+
+        .bar {
+            width: min(40px, 70%);
+            min-height: 4px;
+            border-radius: 8px 8px 3px 3px;
+            background: linear-gradient(to top, var(--primary), #818cf8);
+            transition: height 0.5s ease;
+        }
+
+        .day {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* Form */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: white;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 13px 20px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .btn-full {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        /* Activity list */
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .activity {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .activity-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-info strong {
+            display: block;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .activity-info span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .activity-stats {
+            text-align: right;
+            font-size: 13px;
+        }
+
+        .activity-stats strong {
+            display: block;
+            color: var(--dark);
+        }
+
+        .delete-btn {
+            border: none;
+            background: #fef2f2;
+            color: var(--red);
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--muted);
+            padding: 25px 10px;
+            font-size: 14px;
+        }
+
+        /* Weekly summary */
+
+        .weekly-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .summary-box {
+            background: var(--background);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .summary-box strong {
+            display: block;
+            font-size: 20px;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .summary-box span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            padding: 15px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 900px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 550px) {
+            main {
+                width: 94%;
+                margin-top: 25px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .welcome h1 {
+                font-size: 25px;
+            }
+
+            .date-display {
+                display: none;
+            }
+
+            .weekly-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">🏃</div>
+            FitTrack
+        </div>
+
+        <div class="date-display" id="currentDate"></div>
+    </div>
+</header>
+
+<main>
+
+    <section class="welcome">
+        <h1>Fitness Dashboard</h1>
+        <p>Track your activities and stay on top of your fitness goals.</p>
+    </section>
+
+    <!-- Today's statistics -->
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-label">Today's Steps</div>
+                <div class="stat-icon steps-icon">👟</div>
+            </div>
+            <div class="stat-value" id="stepsValue">0</div>
+            <div class="goal">Goal: 10,000 steps</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-label">Workout Time</div>
+                <div class="stat-icon workout-icon">⏱️</div>
+            </div>
+            <div class="stat-value" id="workoutValue">0 min</div>
+            <div class="goal">Goal: 60 minutes</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-label">Calories Burned</div>
+                <div class="stat-icon calories-icon">🔥</div>
+            </div>
+            <div class="stat-value" id="caloriesValue">0</div>
+            <div class="goal">Goal: 500 calories</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-label">Activities</div>
+                <div class="stat-icon activities-icon">🏆</div>
+            </div>
+            <div class="stat-value" id="activitiesValue">0</div>
+            <div class="goal">Logged today</div>
+        </div>
+
+    </section>
+
+    <div class="dashboard-grid">
+
+        <!-- Left column -->
+        <div>
+
+            <!-- Today's progress -->
+            <section class="card">
+                <div class="card-header">
+                    <h2>Today's Progress</h2>
+                </div>
+
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <span>Steps</span>
+                        <strong id="stepsProgressText">0 / 10,000</strong>
+                    </div>
+                    <div class="progress-track">
+                        <div
+                            class="progress-bar steps-progress"
+                            id="stepsProgress">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <span>Workout</span>
+                        <strong id="workoutProgressText">0 / 60 min</strong>
+                    </div>
+                    <div class="progress-track">
+                        <div
+                            class="progress-bar workout-progress"
+                            id="workoutProgress">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <span>Calories</span>
+                        <strong id="caloriesProgressText">0 / 500</strong>
+                    </div>
+                    <div class="progress-track">
+                        <div
+                            class="progress-bar calories-progress"
+                            id="caloriesProgress">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weekly chart -->
+            <section class="card">
+                <div class="card-header">
+                    <h2>Weekly Steps</h2>
+                    <span style="font-size:12px;color:#6b7280;">
+                        Last 7 days
+                    </span>
+                </div>
+
+                <div class="chart" id="weeklyChart"></div>
+            </section>
+
+            <!-- Recent activities -->
+            <section class="card">
+                <div class="card-header">
+                    <h2>Recent Activities</h2>
+                </div>
+
+                <div class="activity-list" id="activityList"></div>
+            </section>
+
+        </div>
+
+        <!-- Right column -->
+        <div>
+
+            <!-- Log activity -->
+            <section class="card">
+                <div class="card-header">
+                    <h2>Log Activity</h2>
+                </div>
+
+                <form id="activityForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="activityDate">Date</label>
+                            <input
+                                type="date"
+                                id="activityDate"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="activityType">Exercise Type</label>
+                            <select id="activityType" required>
+                                <option value="Walking">Walking</option>
+                                <option value="Running">Running</option>
+                                <option value="Cycling">Cycling</option>
+                                <option value="Gym">Gym</option>
+                                <option value="Swimming">Swimming</option>
+                                <option value="Yoga">Yoga</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="steps">Steps</label>
+                            <input
+                                type="number"
+                                id="steps"
+                                min="0"
+                                placeholder="e.g. 5000"
+                                value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duration">Workout Time (min)</label>
+                            <input
+                                type="number"
+                                id="duration"
+                                min="0"
+                                placeholder="e.g. 30"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="calories">Calories Burned</label>
+                            <input
+                                type="number"
+                                id="calories"
+                                min="0"
+                                placeholder="e.g. 250"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="distance">Distance (km)</label>
+                            <input
+                                type="number"
+                                id="distance"
+                                min="0"
+                                step="0.1"
+                                placeholder="Optional">
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="notes">Notes</label>
+                            <input
+                                type="text"
+                                id="notes"
+                                maxlength="100"
+                                placeholder="Optional notes">
+                        </div>
+
+                        <div class="form-group full">
+                            <button class="btn btn-primary btn-full" type="submit">
+                                + Add Activity
+                            </button>
+                        </div>
+
+                    </div>
+
+                </form>
+            </section>
+
+            <!-- Weekly summary -->
+            <section class="card">
+                <div class="card-header">
+                    <h2>Weekly Summary</h2>
+                </div>
+
+                <div class="weekly-summary">
+
+                    <div class="summary-box">
+                        <strong id="weeklySteps">0</strong>
+                        <span>Total Steps</span>
+                    </div>
+
+                    <div class="summary-box">
+                        <strong id="weeklyWorkout">0 min</strong>
+                        <span>Workout Time</span>
+                    </div>
+
+                    <div class="summary-box">
+                        <strong id="weeklyCalories">0</strong>
+                        <span>Calories Burned</span>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+</main>
+
+<footer>
+    FitTrack • Your daily fitness companion
+</footer>
+
+
+<script>
+    /*
+     * FITNESS TRACKER
+     * Data is stored using browser localStorage.
+     */
+
+    const STORAGE_KEY = "fittrack_activities";
+
+    const today = new Date();
+
+    const formatDate = date => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    };
+
+    const todayString = formatDate(today);
+
+    // Load saved activities
+    let activities = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
+    // Set date fields
+    document.getElementById("activityDate").value = todayString;
+
+    document.getElementById("currentDate").textContent =
+        today.toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+        });
+
+
+    /*
+     * SAVE DATA
+     */
+
+    function saveActivities() {
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(activities)
+        );
+    }
+
+
+    /*
+     * GET DAILY DATA
+     */
+
+    function getDailyData(date) {
+
+        const daily = activities.filter(
+            activity => activity.date === date
+        );
+
+        return {
+            steps: daily.reduce(
+                (total, activity) =>
+                    total + Number(activity.steps || 0),
+                0
+            ),
+
+            duration: daily.reduce(
+                (total, activity) =>
+                    total + Number(activity.duration || 0),
+                0
+            ),
+
+            calories: daily.reduce(
+                (total, activity) =>
+                    total + Number(activity.calories || 0),
+                0
+            ),
+
+            activities: daily.length
+        };
+    }
+
+
+    /*
+     * UPDATE DASHBOARD
+     */
+
+    function updateDashboard() {
+
+        const data = getDailyData(todayString);
+
+        document.getElementById("stepsValue").textContent =
+            data.steps.toLocaleString();
+
+        document.getElementById("workoutValue").textContent =
+            `${data.duration} min`;
+
+        document.getElementById("caloriesValue").textContent =
+            data.calories.toLocaleString();
+
+        document.getElementById("activitiesValue").textContent =
+            data.activities;
+
+
+        // Progress bars
+        const stepsPercent =
+            Math.min((data.steps / 10000) * 100, 100);
+
+        const workoutPercent =
+            Math.min((data.duration / 60) * 100, 100);
+
+        const caloriesPercent =
+            Math.min((data.calories / 500) * 100, 100);
+
+
+        document.getElementById("stepsProgress").style.width =
+            `${stepsPercent}%`;
+
+        document.getElementById("workoutProgress").style.width =
+            `${workoutPercent}%`;
+
+        document.getElementById("caloriesProgress").style.width =
+            `${caloriesPercent}%`;
+
+
+        document.getElementById("stepsProgressText").textContent =
+            `${data.steps.toLocaleString()} / 10,000`;
+
+        document.getElementById("workoutProgressText").textContent =
+            `${data.duration} / 60 min`;
+
+        document.getElementById("caloriesProgressText").textContent =
+            `${data.calories.toLocaleString()} / 500`;
+    }
+
+
+    /*
+     * WEEKLY DATA
+     */
+
+    function getLastSevenDays() {
+
+        const days = [];
+
+        for (let i = 6; i >= 0; i--) {
+
+            const date = new Date();
+
+            date.setHours(0, 0, 0, 0);
+            date.setDate(date.getDate() - i);
+
+            days.push(date);
+        }
+
+        return days;
+    }
+
+
+    /*
+     * UPDATE WEEKLY CHART
+     */
+
+    function updateChart() {
+
+        const days = getLastSevenDays();
+
+        const values = days.map(date =>
+            getDailyData(formatDate(date)).steps
+        );
+
+        const maxValue = Math.max(...values, 10000);
+
+        const chart = document.getElementById("weeklyChart");
+
+        chart.innerHTML = "";
+
+        days.forEach((date, index) => {
+
+            const value = values[index];
+
+            const column = document.createElement("div");
+            column.className = "chart-column";
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "bar-wrapper";
+
+            const bar = document.createElement("div");
+            bar.className = "bar";
+
+            const height =
+                value === 0
+                    ? 4
+                    : Math.max((value / maxValue) * 100, 5);
+
+            bar.style.height = `${height}%`;
+            bar.title = `${value.toLocaleString()} steps`;
+
+            const day = document.createElement("div");
+            day.className = "day";
+
+            day.textContent = date.toLocaleDateString(
+                "en-US",
+                { weekday: "short" }
+            );
+
+            wrapper.appendChild(bar);
+            column.appendChild(wrapper);
+            column.appendChild(day);
+
+            chart.appendChild(column);
+        });
+    }
+
+
+    /*
+     * WEEKLY SUMMARY
+     */
+
+    function updateWeeklySummary() {
+
+        const days = getLastSevenDays();
+
+        let steps = 0;
+        let workout = 0;
+        let calories = 0;
+
+        days.forEach(day => {
+
+            const data = getDailyData(formatDate(day));
+
+            steps += data.steps;
+            workout += data.duration;
+            calories += data.calories;
+
+        });
+
+        document.getElementById("weeklySteps").textContent =
+            steps.toLocaleString();
+
+        document.getElementById("weeklyWorkout").textContent =
+            `${workout} min`;
+
+        document.getElementById("weeklyCalories").textContent =
+            calories.toLocaleString();
+    }
+
+
+    /*
+     * ACTIVITY LIST
+     */
+
+    function renderActivities() {
+
+        const list = document.getElementById("activityList");
+
+        list.innerHTML = "";
+
+        if (activities.length === 0) {
+
+            list.innerHTML = `
+                <div class="empty">
+                    No activities logged yet.<br>
+                    Add your first workout above!
+                </div>
+            `;
+
+            return;
+        }
+
+
+        // Newest activities first
+        const sorted = [...activities].sort(
+            (a, b) =>
+                new Date(b.date) - new Date(a.date)
+        );
+
+
+        sorted.slice(0, 8).forEach(activity => {
+
+            const item = document.createElement("div");
+            item.className = "activity";
+
+            const icon = document.createElement("div");
+            icon.className = "activity-icon";
+            icon.textContent = getActivityIcon(activity.type);
+
+
+            const info = document.createElement("div");
+            info.className = "activity-info";
+
+            const title = document.createElement("strong");
+            title.textContent = activity.type;
+
+            const details = document.createElement("span");
+
+            details.textContent =
+                `${formatReadableDate(activity.date)} • ` +
+                `${activity.duration} min` +
+                (activity.notes
+                    ? ` • ${activity.notes}`
+                    : "");
+
+            info.appendChild(title);
+            info.appendChild(details);
+
+
+            const stats = document.createElement("div");
+            stats.className = "activity-stats";
+
+            const calories = document.createElement("strong");
+
+            calories.textContent =
+                `${Number(activity.calories).toLocaleString()} kcal`;
+
+            const steps = document.createElement("span");
+
+            steps.textContent =
+                `${Number(activity.steps || 0).toLocaleString()} steps`;
+
+            stats.appendChild(calories);
+            stats.appendChild(steps);
+
+
+            const deleteButton =
+                document.createElement("button");
+
+            deleteButton.className = "delete-btn";
+            deleteButton.textContent = "×";
+            deleteButton.title = "Delete activity";
+
+            deleteButton.addEventListener(
+                "click",
+                () => deleteActivity(activity.id)
+            );
+
+
+            item.appendChild(icon);
+            item.appendChild(info);
+            item.appendChild(stats);
+            item.appendChild(deleteButton);
+
+            list.appendChild(item);
+        });
+    }
+
+
+    /*
+     * ACTIVITY ICONS
+     */
+
+    function getActivityIcon(type) {
+
+        const icons = {
+            Walking: "🚶",
+            Running: "🏃",
+            Cycling: "🚴",
+            Gym: "🏋️",
+            Swimming: "🏊",
+            Yoga: "🧘",
+            Other: "💪"
+        };
+
+        return icons[type] || "💪";
+    }
+
+
+    /*
+     * FORMAT DATE
+     */
+
+    function formatReadableDate(dateString) {
+
+        const date = new Date(dateString + "T00:00:00");
+
+        return date.toLocaleDateString(
+            "en-US",
+            {
+                month: "short",
+                day: "numeric"
+            }
+        );
+    }
+
+
+    /*
+     * ADD ACTIVITY
+     */
+
+    document
+        .getElementById("activityForm")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const activity = {
+
+                id: Date.now(),
+
+                date:
+                    document.getElementById("activityDate").value,
+
+                type:
+                    document.getElementById("activityType").value,
+
+                steps:
+                    Number(
+                        document.getElementById("steps").value
+                    ) || 0,
+
+                duration:
+                    Number(
+                        document.getElementById("duration").value
+                    ) || 0,
+
+                calories:
+                    Number(
+                        document.getElementById("calories").value
+                    ) || 0,
+
+                distance:
+                    Number(
+                        document.getElementById("distance").value
+                    ) || 0,
+
+                notes:
+                    document.getElementById("notes").value.trim()
+            };
+
+
+            activities.push(activity);
+
+            saveActivities();
+
+            updateAll();
+
+            // Reset form
+            this.reset();
+
+            document.getElementById("activityDate").value =
+                todayString;
+
+            document.getElementById("steps").value = 0;
+
+            // Small confirmation
+            const button =
+                this.querySelector("button");
+
+            const originalText = button.textContent;
+
+            button.textContent = "✓ Activity Added";
+
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 1200);
+        });
+
+
+    /*
+     * DELETE ACTIVITY
+     */
+
+    function deleteActivity(id) {
+
+        activities = activities.filter(
+            activity => activity.id !== id
+        );
+
+        saveActivities();
+
+        updateAll();
+    }
+
+
+    /*
+     * UPDATE EVERYTHING
+     */
+
+    function updateAll() {
+        updateDashboard();
+        updateChart();
+        updateWeeklySummary();
+        renderActivities();
+    }
+
+
+    // Initial render
+    updateAll();
+</script>
+
+</body>
+</html>
